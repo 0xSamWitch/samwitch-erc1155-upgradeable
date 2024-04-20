@@ -4,7 +4,7 @@ import {ethers, upgrades} from "hardhat";
 import {TestERC1155UpgradeableSinglePerToken} from "../typechain-types";
 
 // Test stuff like mint/burn/transfer/balanceOf/totalSupply. The rest should be covered by the normal OZ ERC1155 tests.
-describe("ERC1155UpgradeableSinglePerToken", function () {
+describe("SamWitchERC1155UpgradeableSinglePerToken", function () {
   const firstTokenId = 1n;
   const secondTokenId = 2n;
   const unknownTokenId = 3n;
@@ -16,7 +16,7 @@ describe("ERC1155UpgradeableSinglePerToken", function () {
     const ERC1155UpgradeableSinglePerToken = await ethers.getContractFactory("TestERC1155UpgradeableSinglePerToken");
     const erc1155UpgradeableSinglePerToken = (await upgrades.deployProxy(ERC1155UpgradeableSinglePerToken, [], {
       kind: "uups",
-    })) as TestERC1155UpgradeableSinglePerTokenInterface;
+    })) as unknown as TestERC1155UpgradeableSinglePerToken;
     return {owner, alice, erc1155UpgradeableSinglePerToken};
   }
 
