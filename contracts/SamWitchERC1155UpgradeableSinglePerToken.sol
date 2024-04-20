@@ -1,6 +1,4 @@
 // SPDX-License-Identifier: MIT
-// OpenZeppelin Contracts (last updated v5.0.0) (token/ERC1155/ERC1155.sol)
-
 pragma solidity ^0.8.20;
 
 import {IERC1155} from "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
@@ -16,7 +14,7 @@ import {Initializable} from "@openzeppelin/contracts-upgradeable/proxy/utils/Ini
 /**
  * @dev Implementation of the basic standard multi-token.
  * See https://eips.ethereum.org/EIPS/eip-1155
- * Originally based on code by Enjin: https://github.com/enjin/erc-1155
+ * Originally based on code by OpenZeppelin v5.0.0
  */
 abstract contract SamWitchERC1155UpgradeableSinglePerToken is
   Initializable,
