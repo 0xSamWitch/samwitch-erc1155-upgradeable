@@ -88,7 +88,7 @@ abstract contract SamWitchERC1155UpgradeableSinglePerToken is
   /**
    * Override this function to return the owner of the token if you have a better packed implementation
    */
-  function getOwner(uint256 id) public view virtual returns (address) {
+  function ownerOf(uint256 id) public view virtual returns (address) {
     return _owner[id];
   }
 
@@ -96,7 +96,7 @@ abstract contract SamWitchERC1155UpgradeableSinglePerToken is
    * @dev See {IERC1155-balanceOf}.
    */
   function balanceOf(address account, uint256 id) public view virtual returns (uint256) {
-    return getOwner(id) == account ? 1 : 0;
+    return ownerOf(id) == account ? 1 : 0;
   }
 
   /**
@@ -194,7 +194,7 @@ abstract contract SamWitchERC1155UpgradeableSinglePerToken is
       uint256 value = values.unsafeMemoryAccess(i);
 
       if (!isMinted) {
-        uint256 fromBalance = getOwner(id) == from ? 1 : 0;
+        uint256 fromBalance = ownerOf(id) == from ? 1 : 0;
         if (fromBalance < value) {
           revert ERC1155InsufficientBalance(from, fromBalance, value, id);
         }

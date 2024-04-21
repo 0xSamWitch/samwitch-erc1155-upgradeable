@@ -7,7 +7,7 @@ This ERC1155 contract is optimized for the case where each token has a single ow
 It is based on OpenZeppelin V5 ERC1155 upgradeable token, supports the ERC1155Supply extension (adding totalSupply() and totalSupply(id)).
 It has a different storage layout, so is not a drop-in replaceplacement if have already deployed a contract, it also does not have namespaced storage intentionally to allow further packing in derived contracts.  
 
-For even more optimizations override `getOwner` & `_updateOwner` if you are able to pack the owner inside your own structs efficiently.  
+For even more optimizations override `ownerOf` & `_updateOwner` if you are able to pack the owner inside your own structs efficiently.  
 Although it uses a version based on OpenZeppelin V4, Estfor Kingdom is using this for the PetNFT for example:  
 ```js
   struct Pet {
@@ -15,7 +15,7 @@ Although it uses a version based on OpenZeppelin V4, Estfor Kingdom is using thi
     address owner; // Will be used as an optimzation to avoid having to look up the owner of the pet in another storage slot in base class
   }
 
-  function getOwner(uint _tokenId) public view override returns (address) {
+  function ownerOf(uint _tokenId) public view override returns (address) {
     return pets[_tokenId].owner;
   }
 
