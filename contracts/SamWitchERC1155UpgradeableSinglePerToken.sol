@@ -51,8 +51,8 @@ abstract contract SamWitchERC1155UpgradeableSinglePerToken is
     _setURI(uri_);
   }
 
-  function totalSupply(uint _tokenId) public view returns (uint) {
-    return _exists(_tokenId) ? 1 : 0;
+  function totalSupply(uint tokenId) public view returns (uint) {
+    return _exists(tokenId) ? 1 : 0;
   }
 
   function totalSupply() external view returns (uint) {
@@ -524,8 +524,8 @@ abstract contract SamWitchERC1155UpgradeableSinglePerToken is
   }
 
   // Override this function if _updateOwner is overriden
-  function _exists(uint _tokenId) internal view virtual returns (bool) {
-    return _owner[_tokenId] != address(0);
+  function _exists(uint tokenId) internal view virtual returns (bool) {
+    return _owner[tokenId] != address(0);
   }
 
   function _updateOwner(uint256 id, address to) internal virtual {
