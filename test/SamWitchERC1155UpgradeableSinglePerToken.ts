@@ -260,7 +260,7 @@ describe("SamWitchERC1155UpgradeableSinglePerToken", function () {
   });
 
   describe("burn", function () {
-    it("reverts when burning more than balance", async function () {
+    it("Reverts when burning more than balance", async function () {
       const {owner, erc1155UpgradeableSinglePerToken} = await loadFixture(deployContracts);
       await erc1155UpgradeableSinglePerToken.mint(owner.address, firstTokenId, firstAmount, "0x");
 
@@ -281,7 +281,7 @@ describe("SamWitchERC1155UpgradeableSinglePerToken", function () {
       expect(await erc1155UpgradeableSinglePerToken.balanceOf(owner.address, secondTokenId)).to.eq(0);
     });
 
-    it("Burning with dead address should also remove from totalSupply and remove balance", async function () {
+    it("Burning with dead address should not remove from totalSupply and remove balance", async function () {
       const {owner, erc1155UpgradeableSinglePerToken} = await loadFixture(deployContracts);
       await erc1155UpgradeableSinglePerToken.mint(owner.address, firstTokenId, firstAmount, "0x");
 
@@ -293,8 +293,8 @@ describe("SamWitchERC1155UpgradeableSinglePerToken", function () {
         "0x",
       );
 
-      expect(await erc1155UpgradeableSinglePerToken["totalSupply()"]()).to.be.eq(0);
-      expect(await erc1155UpgradeableSinglePerToken["totalSupply(uint256)"](firstTokenId)).to.be.eq(0);
+      expect(await erc1155UpgradeableSinglePerToken["totalSupply()"]()).to.be.eq(firstAmount);
+      expect(await erc1155UpgradeableSinglePerToken["totalSupply(uint256)"](firstTokenId)).to.be.eq(firstAmount);
       expect(await erc1155UpgradeableSinglePerToken.balanceOf(owner.address, firstTokenId)).to.eq(0);
     });
 
@@ -312,10 +312,27 @@ describe("SamWitchERC1155UpgradeableSinglePerToken", function () {
       expect(await erc1155UpgradeableSinglePerToken["totalSupply(uint256)"](firstTokenId)).to.be.eq(1);
       expect(await erc1155UpgradeableSinglePerToken.balanceOf(owner.address, firstTokenId)).to.eq(1);
     });
+
+    it("Approved operators can burn the holder's tokens", async function () {
+      const {owner, alice, erc1155UpgradeableSinglePerToken} = await loadFixture(deployContracts);
+      await erc1155UpgradeableSinglePerToken.mint(owner.address, firstTokenId, firstAmount, "0x");
+
+      await erc1155UpgradeableSinglePerToken.setApprovalForAll(alice, true);
+      await erc1155UpgradeableSinglePerToken.connect(alice).burn(owner, firstTokenId, firstAmount);
+      expect(await erc1155UpgradeableSinglePerToken.balanceOf(owner, firstTokenId)).to.equal(0);
+    });
+
+    it("Unapproved accounts cannot burn the holder's tokens", async function () {
+      const {owner, alice, erc1155UpgradeableSinglePerToken} = await loadFixture(deployContracts);
+      await erc1155UpgradeableSinglePerToken.mint(owner.address, firstTokenId, firstAmount, "0x");
+      await expect(erc1155UpgradeableSinglePerToken.connect(alice).burn(owner, firstTokenId, firstAmount))
+        .to.be.revertedWithCustomError(erc1155UpgradeableSinglePerToken, "ERC1155MissingApprovalForAll")
+        .withArgs(alice.address, owner.address);
+    });
   });
 
   describe("burnBatch", function () {
-    it("reverts when burning more than balance", async function () {
+    it("Reverts when burning more than balance", async function () {
       const {owner, erc1155UpgradeableSinglePerToken} = await loadFixture(deployContracts);
       await erc1155UpgradeableSinglePerToken.mint(owner.address, firstTokenId, firstAmount, "0x");
 
@@ -333,6 +350,40 @@ describe("SamWitchERC1155UpgradeableSinglePerToken", function () {
       expect(await erc1155UpgradeableSinglePerToken["totalSupply()"]()).to.be.eq(0);
       expect(await erc1155UpgradeableSinglePerToken["totalSupply(uint256)"](firstTokenId)).to.be.eq(0);
       expect(await erc1155UpgradeableSinglePerToken.balanceOf(owner.address, firstTokenId)).to.eq(0);
+    });
+
+    it("Approved operators can burn the holder's tokens", async function () {
+      const {owner, alice, erc1155UpgradeableSinglePerToken} = await loadFixture(deployContracts);
+      await erc1155UpgradeableSinglePerToken.mint(owner.address, firstTokenId, firstAmount, "0x");
+
+      await erc1155UpgradeableSinglePerToken.setApprovalForAll(alice, true);
+      await erc1155UpgradeableSinglePerToken.connect(alice).burnBatch(owner, [firstTokenId], [firstAmount]);
+      expect(await erc1155UpgradeableSinglePerToken.balanceOf(owner, firstTokenId)).to.equal(0);
+    });
+
+    it("Unapproved accounts cannot burn the holder's tokens", async function () {
+      const {owner, alice, erc1155UpgradeableSinglePerToken} = await loadFixture(deployContracts);
+      await erc1155UpgradeableSinglePerToken.mint(owner.address, firstTokenId, firstAmount, "0x");
+      await expect(erc1155UpgradeableSinglePerToken.connect(alice).burnBatch(owner, [firstTokenId], [firstAmount]))
+        .to.be.revertedWithCustomError(erc1155UpgradeableSinglePerToken, "ERC1155MissingApprovalForAll")
+        .withArgs(alice.address, owner.address);
+    });
+  });
+
+  describe("supportsInterface", async function () {
+    it("IERC165", async function () {
+      const {erc1155UpgradeableSinglePerToken} = await loadFixture(deployContracts);
+      expect(await erc1155UpgradeableSinglePerToken.supportsInterface("0x01ffc9a7")).to.be.true;
+    });
+
+    it("IERC1155", async function () {
+      const {erc1155UpgradeableSinglePerToken} = await loadFixture(deployContracts);
+      expect(await erc1155UpgradeableSinglePerToken.supportsInterface("0xd9b67a26")).to.be.true;
+    });
+
+    it("IERC1155Metadata", async function () {
+      const {erc1155UpgradeableSinglePerToken} = await loadFixture(deployContracts);
+      expect(await erc1155UpgradeableSinglePerToken.supportsInterface("0x0e89341c")).to.be.true;
     });
   });
 });

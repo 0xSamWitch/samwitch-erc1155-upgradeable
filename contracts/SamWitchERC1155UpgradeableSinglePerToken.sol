@@ -186,7 +186,7 @@ abstract contract SamWitchERC1155UpgradeableSinglePerToken is
 
     address operator = _msgSender();
 
-    bool isBurnt = to == address(0) || to == 0x000000000000000000000000000000000000dEaD;
+    bool isBurnt = to == address(0);
     bool isMinted = from == address(0);
 
     for (uint256 i = 0; i < ids.length; ++i) {

@@ -30,10 +30,17 @@ contract TestERC1155UpgradeableSinglePerToken is
   }
 
   function burn(address account, uint256 id, uint256 amount) external {
+    if (account != _msgSender() && !isApprovedForAll(account, _msgSender())) {
+      revert ERC1155MissingApprovalForAll(_msgSender(), account);
+    }
+
     _burn(account, id, amount);
   }
 
   function burnBatch(address account, uint256[] memory ids, uint256[] memory amounts) external {
+    if (account != _msgSender() && !isApprovedForAll(account, _msgSender())) {
+      revert ERC1155MissingApprovalForAll(_msgSender(), account);
+    }
     _burnBatch(account, ids, amounts);
   }
 
