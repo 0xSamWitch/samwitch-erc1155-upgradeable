@@ -15,12 +15,12 @@ Although it uses a version based on OpenZeppelin V4, Estfor Kingdom is using thi
     address owner; // Will be used as an optimzation to avoid having to look up the owner of the pet in another storage slot in base class
   }
 
-  function ownerOf(uint _tokenId) public view override returns (address) {
+  function ownerOf(uint256 _tokenId) public view override returns (address) {
     return pets[_tokenId].owner;
   }
 
   function _updateOwner(uint256 _id, address _to) internal override {
-    bool isBurnt = _to == address(0) || _to == 0x000000000000000000000000000000000000dEaD;
+    bool isBurnt = _to == address(0);
     if (isBurnt) {
       delete pets[_id];
     } else {
